@@ -174,7 +174,7 @@ function simulateOperations() {
 // ──────────────────────────────────────────────
 // ACCESSIBILITY SIMULATIONS
 // ──────────────────────────────────────────────
-function simulateAccessibility(prompt) {
+function simulateAccessibility(_prompt) {
   return {
     route: 'Wheelchair-accessible route from Gate F to Section 105: Use Ramp R2 → Level 1 Corridor → Elevator E3 to Level 2 → Follow blue tactile guides to Section 105. Total distance: 280m, estimated time: 6 minutes.',
     sensoryZones: [

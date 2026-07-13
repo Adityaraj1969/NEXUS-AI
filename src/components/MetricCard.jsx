@@ -1,4 +1,4 @@
-import {  useState, useEffect , useMemo } from 'react';
+import {  useState, useEffect  } from 'react';
 import { TrendingUp, TrendingDown } from 'lucide-react';
 import { LineChart, Line, ResponsiveContainer } from 'recharts';
 
@@ -37,7 +37,7 @@ export default function MetricCard({
   useEffect(() => {
     const duration = 1200;
     const steps = 40;
-    const increment = value / steps;
+    // const increment = value / steps;
     let current = 0;
     let step = 0;
 
@@ -58,9 +58,10 @@ export default function MetricCard({
   }, [value]);
 
   // Generate default sparkline data if not provided
-  const chartData = (sparkData || Array.from({ length: 10 }, () =>
+  const [defaultSparkData] = useState(() => Array.from({ length: 10 }, () =>
     Math.round(value * (0.8 + Math.random() * 0.4))
-  )).map((v, i) => ({ idx: i, val: v }));
+  ));
+  const chartData = (sparkData || defaultSparkData).map((v, i) => ({ idx: i, val: v }));
 
   return (
     <div

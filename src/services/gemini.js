@@ -162,7 +162,7 @@ export class HybridGeminiClient {
       clearTimeout(this._recoveryTimer);
       this._recoveryTimer = setTimeout(() => {
         this.rateLimited = false;
-        console.info('[NEXUS AI] Rate-limit cooldown elapsed. Re-enabling live API.');
+        console.warn('[NEXUS AI] Rate-limit cooldown elapsed. Re-enabling live API.');
       }, RATE_LIMIT_RECOVERY_MS);
     } else {
       console.warn(

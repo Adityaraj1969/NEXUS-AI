@@ -1,12 +1,12 @@
-import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import {
   AreaChart, Area, PieChart, Pie, Cell, LineChart, Line,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
 } from 'recharts';
 import {
   Leaf, Zap, Droplets, Recycle, Wind, Sun, Thermometer,
-  TrendingDown, TrendingUp, Award, RefreshCw, Loader2,
-  Battery, Lightbulb, TreePine, Globe, Users, Star
+  TrendingDown, TrendingUp, RefreshCw,
+  Battery, Lightbulb, TreePine, Award
 } from 'lucide-react';
 
 /** ─── CONSTANTS ─── */

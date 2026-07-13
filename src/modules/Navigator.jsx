@@ -1,8 +1,8 @@
 import { useState, useCallback, useRef, useMemo } from 'react';
 import {
   Navigation, MapPin, Clock, Accessibility, Eye, ChevronDown,
-  Route, Footprints, LocateFixed, ArrowRight, Star, Coffee,
-  Cross, ShieldCheck, Ticket, ChevronRight, Search, Loader2
+  Route, Footprints, LocateFixed,  Star, Coffee,
+  Cross, ShieldCheck, Ticket,  Search, Loader2
 } from 'lucide-react';
 
 /** ─── CONSTANTS ─── */
@@ -152,11 +152,11 @@ export default function Navigator() {
 
   const selectedDest = DESTINATIONS.find(d => d.id === destination);
 
-  const walkTimes = useMemo(() => ({
+  const [walkTimes] = useState(() => ({
     standard: Math.round(3 + Math.random() * 5),
     wheelchair: Math.round(5 + Math.random() * 7),
     visual: Math.round(6 + Math.random() * 6),
-  }), []);
+  }));
 
   /** Simulate AI route generation */
   const handleFindRoute = useCallback(() => {

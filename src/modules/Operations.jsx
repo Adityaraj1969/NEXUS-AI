@@ -4,11 +4,10 @@ import {
   ResponsiveContainer, Cell
 } from 'recharts';
 import {
-  Shield, AlertTriangle, Users, Stethoscope, Clock, Zap,
+  Shield, Users, Stethoscope, Clock, Zap,
   RefreshCw, Plus, Minus, CloudRain, Sun, Wind, Thermometer,
-  Radio, Siren, CloudLightning, ShieldAlert, UserCheck,
-  Loader2, X, AlertOctagon, Megaphone, ChevronRight,
-  Activity, MapPin, FileText
+  Siren, CloudLightning, ShieldAlert, UserCheck,
+  Activity, MapPin
 } from 'lucide-react';
 
 /** ─── CONSTANTS ─── */
@@ -117,13 +116,7 @@ export default function Operations() {
   const feedRef = useRef(null);
   const prefersReducedMotion = useMemo(() => typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches, []);
 
-  /** In-Memory RAG: get recent context for AI prompt */
-  const ragContext = useMemo(() => {
-    const recentEvents = events.slice(-RAG_CONTEXT_SIZE);
-    return recentEvents.map(e =>
-      `[${e.timestamp.toISOString()}] [${e.severity.toUpperCase()}] [${e.category}] ${e.message} (Zone: ${e.zone})`
-    ).join('\n');
-  }, [events]);
+
 
   /** Simulate new events arriving */
   useEffect(() => {
@@ -163,7 +156,7 @@ export default function Operations() {
       setBriefing(AI_BRIEFINGS[briefingIdx.current]);
       setBriefingLoading(false);
     }, 1500);
-  }, [ragContext]);
+  }, []);
 
   useEffect(() => {
     const id = setInterval(refreshBriefing, BRIEFING_REFRESH_MS);
@@ -197,7 +190,6 @@ export default function Operations() {
   }, [selectedProtocol]);
 
   const criticalCount = useMemo(() => events.filter(e => e.severity === 'critical').length, [events]);
-  const highCount = useMemo(() => events.filter(e => e.severity === 'high').length, [events]);
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-950 via-red-950/10 to-gray-950 p-4 md:p-6 lg:p-8" role="main" aria-label="Operations Command Center">
@@ -206,7 +198,7 @@ export default function Operations() {
         <div className="fixed left-1/2 top-4 z-50 -translate-x-1/2 rounded-xl border border-red-500/30 bg-red-900/90 px-6 py-3 text-sm font-semibold text-white shadow-2xl backdrop-blur-xl"
           role="alert" aria-live="assertive">
           <Siren className="mr-2 inline-block h-4 w-4 animate-pulse text-red-400" aria-hidden="true" />
-          Protocol "{protocolActivated}" activated — all teams notified
+          Protocol &quot;{protocolActivated}&quot; activated — all teams notified
         </div>
       )}
 

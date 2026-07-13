@@ -1,32 +1,15 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import DOMPurify from 'dompurify';
+import { validateInput } from '../lib/security';
 import {
-  MessageSquare, Send, Globe, Loader2, Sparkles, MapPin,
-  Calendar, Accessibility, HelpCircle, Bot, User, ChevronDown,
-  Volume2, Mic, RotateCcw, Info, CheckCircle2, MicOff
+  MessageSquare, Send, Globe,  Sparkles, MapPin,
+  Bot, User,
+  Mic, RotateCcw, Info, CheckCircle2, MicOff
 } from 'lucide-react';
 import PropTypes from 'prop-types';
 import { geminiClient } from '../services/gemini';
 
 /** ─── CONSTANTS ─── */
-const LANGUAGES = [
-  { code: 'en', label: 'English', flag: '🇺🇸' },
-  { code: 'es', label: 'Español', flag: '🇪🇸' },
-  { code: 'fr', label: 'Français', flag: '🇫🇷' },
-  { code: 'ar', label: 'العربية', flag: '🇸🇦' },
-  { code: 'pt', label: 'Português', flag: '🇧🇷' },
-  { code: 'de', label: 'Deutsch', flag: '🇩🇪' },
-  { code: 'ja', label: '日本語', flag: '🇯🇵' },
-];
-
-const QUICK_ACTIONS = [
-  { label: 'Where is Gate A?', icon: MapPin },
-  { label: 'Next match?', icon: Calendar },
-  { label: 'Nearest restroom?', icon: MapPin },
-  { label: 'Help with wheelchair access', icon: Accessibility },
-];
-
-
 
 const WELCOME_MESSAGE = {
   id: 'welcome',
@@ -152,6 +135,7 @@ export default function Concierge({ language = 'en' }) {
   const chatEndRef = useRef(null);
   const inputRef = useRef(null);
   const recognitionRef = useRef(null);
+  const hasSpeechSupport = useMemo(() => typeof window !== 'undefined' && ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window), []);
 
   /** Scroll to bottom when messages change */
   useEffect(() => {
@@ -192,6 +176,12 @@ export default function Concierge({ language = 'en' }) {
   const handleSend = useCallback(async (text) => {
     const sanitizedText = DOMPurify.sanitize(text || input).trim();
     if (!sanitizedText) {return;}
+
+    const validation = validateInput(sanitizedText, 'safeText');
+    if (!validation.valid) {
+      window.dispatchEvent(new CustomEvent('nexus-toast', { detail: { message: 'Message contains invalid characters.', type: 'error' } }));
+      return;
+    }
 
     const userMsg = {
       id: `user-${Date.now()}`,
@@ -307,7 +297,7 @@ export default function Concierge({ language = 'en' }) {
           {/* Messages Area */}
           <div className="flex-1 overflow-y-auto px-5 py-4" role="list" aria-label="Chat messages" aria-live="polite">
             <div className="space-y-4">
-              {messages.map(msg => (
+              {messages.map((msg) => (
                 <ChatBubble key={msg.id} message={msg} />
               ))}
               {isTyping && <TypingIndicator />}
@@ -357,7 +347,7 @@ export default function Concierge({ language = 'en' }) {
               
               <button
                 onClick={toggleListening}
-                disabled={isTyping || !recognitionRef.current}
+                disabled={isTyping || !hasSpeechSupport}
                 className={`flex h-[46px] w-[46px] shrink-0 items-center justify-center rounded-xl transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed
                   ${isListening ? 'bg-red-500/20 text-red-400 border border-red-500/50 animate-pulse' : 'bg-white/5 text-gray-400 border border-white/10 hover:bg-white/10'}`}
                 aria-label={isListening ? "Stop listening" : "Start speaking"}

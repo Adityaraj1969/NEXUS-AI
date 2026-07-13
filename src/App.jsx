@@ -1,4 +1,4 @@
-import {  lazy, Suspense, useState, useEffect, useCallback , useMemo } from 'react';
+import {  lazy, Suspense, useState, useEffect, useCallback  } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';

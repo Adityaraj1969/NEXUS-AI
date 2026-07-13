@@ -1,12 +1,12 @@
-import { useState, useMemo, useCallback, useRef } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import {
-  BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid,
-  Tooltip, ResponsiveContainer, Legend
+  BarChart, Bar, XAxis, YAxis, CartesianGrid,
+  Tooltip, ResponsiveContainer, PieChart, Pie, Cell
 } from 'recharts';
 import {
   Bus, Car, Footprints, ParkingCircle, Clock, MapPin,
-  Navigation, AlertTriangle, TrendingUp, Zap, Train,
-  CircleDollarSign, ArrowRight, Loader2, ChevronRight,
+  Navigation, AlertTriangle, Zap, Train,
+  CircleDollarSign, ArrowRight, Loader2,
   Timer, Gauge
 } from 'lucide-react';
 

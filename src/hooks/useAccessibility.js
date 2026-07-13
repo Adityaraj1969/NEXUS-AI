@@ -132,7 +132,9 @@ export function useAccessibility() {
 
     // Set initial value from OS on first load
     if (mq.matches && !localStorage.getItem(STORAGE_KEY)) {
-      setPreferences((prev) => ({ ...prev, reducedMotion: true }));
+      setTimeout(() => {
+        setPreferences((prev) => ({ ...prev, reducedMotion: true }));
+      }, 0);
     }
 
     mq.addEventListener('change', handleChange);

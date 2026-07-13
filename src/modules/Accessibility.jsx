@@ -1,11 +1,10 @@
-import { useState, useCallback, useRef, useMemo } from 'react';
+import { useState, useCallback } from 'react';
 import DOMPurify from 'dompurify';
 import {
   Accessibility as AccessibilityIcon, Eye, Ear, Brain,
-  MapPin, Users, Dog, AlertTriangle, Volume2, VolumeX,
-  MessageSquare, Star, Send, Loader2, ChevronDown,
-  Heart, ShieldCheck, Navigation, Phone, Info, CheckCircle2,
-  ArrowRight, Clock
+  Users, Dog, AlertTriangle, Volume2, VolumeX,
+  MessageSquare, Star, Loader2,
+  Navigation, CheckCircle2, Phone, Clock, ArrowRight, Send
 } from 'lucide-react';
 
 /** ─── CONSTANTS ─── */
@@ -125,12 +124,6 @@ export default function Accessibility() {
     setFeedbackSubmitted(false);
   }, []);
 
-  const [ROUTE_DATA] = useState(() => ({
-    standard: Math.round(3 + Math.random() * 5),
-    wheelchair: Math.round(5 + Math.random() * 7),
-    visual: Math.round(6 + Math.random() * 6),
-  }));
-
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-950 via-purple-950/30 to-gray-950 p-4 md:p-6 lg:p-8" role="main" aria-label="Accessibility Center">
       {/* Header */}
@@ -139,7 +132,7 @@ export default function Accessibility() {
           <AccessibilityIcon className="h-8 w-8 text-purple-400" aria-hidden="true" />
           <span className="bg-gradient-to-r from-purple-400 to-teal-400 bg-clip-text text-transparent">Accessibility</span> Center
         </h1>
-        <p className="mt-1 text-sm text-gray-400">Inclusive experience tools — FIFA World Cup 2026 • Everyone's Game</p>
+        <p className="mt-1 text-sm text-gray-400">Inclusive experience tools — FIFA World Cup 2026 • Everyone&apos;s Game</p>
       </header>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">

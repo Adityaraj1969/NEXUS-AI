@@ -1,18 +1,18 @@
-import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   RadialBarChart, RadialBar, LineChart, Line, XAxis, YAxis,
   CartesianGrid, Tooltip, ResponsiveContainer, Legend
 } from 'recharts';
 import {
-  Users, AlertTriangle, TrendingUp, TrendingDown, Brain,
-  RefreshCw, Clock, Zap, MapPin, ChevronRight, Loader2,
-  ShieldAlert, UserPlus, ArrowUpRight, ArrowDownRight, Camera, UploadCloud
+  Users,  TrendingUp, TrendingDown, Brain,
+    Zap,   Loader2,
+  ShieldAlert, UserPlus, ArrowUpRight, ArrowDownRight, Camera
 } from 'lucide-react';
 import PropTypes from 'prop-types';
 import { geminiClient } from '../services/gemini.js';
 
 /** ─── CONSTANTS ─── */
-const ZONE_COUNT = 8;
+// const ZONE_COUNT = 8;
 const THRESHOLD_GREEN = 60;
 const THRESHOLD_YELLOW = 80;
 
@@ -147,7 +147,8 @@ function HeatmapGrid({ zones }) {
       {Array.from({ length: 64 }, (_, i) => {
         const zoneIdx = Math.floor(i / 8);
         const zone = zones[zoneIdx] || zones[0];
-        const intensity = Math.max(0.1, (zone.pct / 100) * (0.6 + Math.random() * 0.4));
+        const pseudoRandom = ((i * 17) % 100) / 100;
+        const intensity = Math.max(0.1, (zone.pct / 100) * (0.6 + pseudoRandom * 0.4));
         const hue = zone.pct >= THRESHOLD_YELLOW ? 0 : zone.pct >= THRESHOLD_GREEN ? 45 : 160;
         return (
           <div

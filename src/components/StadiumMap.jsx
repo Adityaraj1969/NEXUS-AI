@@ -1,4 +1,4 @@
-import {  useState, useCallback , useMemo } from 'react';
+import {  useState, useCallback  } from 'react';
 
 /**
  * @fileoverview Interactive SVG stadium map with clickable zones.
