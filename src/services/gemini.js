@@ -71,14 +71,25 @@ export class HybridGeminiClient {
    * Generate structured JSON via Gemini's native JSON mode.
    * @param {string} prompt — Natural-language prompt requesting structured data
    * @param {string} contextType — Module context for simulation fallback
+   * @param {{ base64: string, mimeType: string }} [imageData=null] — Optional base64 image data
    * @returns {Promise<Object>} Parsed JSON object
    */
-  async generateJSON(prompt, contextType) {
+  async generateJSON(prompt, contextType, imageData = null) {
     if (this.useLiveAI && !this.rateLimited) {
       try {
+        const parts = [prompt];
+        if (imageData) {
+          parts.push({
+            inlineData: {
+              data: imageData.base64,
+              mimeType: imageData.mimeType,
+            },
+          });
+        }
+
         const response = await this.client.models.generateContent({
           model: 'gemini-2.5-flash',
-          contents: prompt,
+          contents: parts,
           config: { responseMimeType: 'application/json' },
         });
         return JSON.parse(response.text);

@@ -117,13 +117,13 @@ const CHAT_RESPONSES = {
 
 function simulateChat(prompt) {
   const lower = (prompt || '').toLowerCase();
-  if (lower.includes('gate')) return CHAT_RESPONSES.gate;
-  if (lower.includes('match') || lower.includes('next') || lower.includes('schedule')) return CHAT_RESPONSES.match;
-  if (lower.includes('restroom') || lower.includes('bathroom') || lower.includes('toilet')) return CHAT_RESPONSES.restroom;
-  if (lower.includes('wheelchair') || lower.includes('accessible') || lower.includes('disability')) return CHAT_RESPONSES.wheelchair;
-  if (lower.includes('food') || lower.includes('eat') || lower.includes('drink') || lower.includes('restaurant')) return CHAT_RESPONSES.food;
-  if (lower.includes('parking') || lower.includes('car') || lower.includes('drive')) return CHAT_RESPONSES.parking;
-  if (lower.includes('weather') || lower.includes('rain') || lower.includes('temperature')) return CHAT_RESPONSES.weather;
+  if (lower.includes('gate')) {return CHAT_RESPONSES.gate;}
+  if (lower.includes('match') || lower.includes('next') || lower.includes('schedule')) {return CHAT_RESPONSES.match;}
+  if (lower.includes('restroom') || lower.includes('bathroom') || lower.includes('toilet')) {return CHAT_RESPONSES.restroom;}
+  if (lower.includes('wheelchair') || lower.includes('accessible') || lower.includes('disability')) {return CHAT_RESPONSES.wheelchair;}
+  if (lower.includes('food') || lower.includes('eat') || lower.includes('drink') || lower.includes('restaurant')) {return CHAT_RESPONSES.food;}
+  if (lower.includes('parking') || lower.includes('car') || lower.includes('drive')) {return CHAT_RESPONSES.parking;}
+  if (lower.includes('weather') || lower.includes('rain') || lower.includes('temperature')) {return CHAT_RESPONSES.weather;}
   return CHAT_RESPONSES.default;
 }
 

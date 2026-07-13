@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import {  useState, useEffect , useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Bell, Globe, Eye, Wifi, WifiOff, Clock } from 'lucide-react';
 import { geminiClient } from '../services/gemini';

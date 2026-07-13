@@ -115,9 +115,7 @@ export default function Operations() {
   const [protocolActivated, setProtocolActivated] = useState(null);
   const briefingIdx = useRef(0);
   const feedRef = useRef(null);
-  const reducedMotion = useRef(
-    typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches
-  );
+  const prefersReducedMotion = useMemo(() => typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches, []);
 
   /** In-Memory RAG: get recent context for AI prompt */
   const ragContext = useMemo(() => {
@@ -263,7 +261,7 @@ export default function Operations() {
                     focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 disabled:opacity-50"
                   aria-label="Refresh briefing"
                 >
-                  <RefreshCw className={`h-4 w-4 ${briefingLoading && !reducedMotion.current ? 'animate-spin' : ''}`} aria-hidden="true" />
+                  <RefreshCw className={`h-4 w-4 ${briefingLoading && !prefersReducedMotion ? 'animate-spin' : ''}`} aria-hidden="true" />
                 </button>
               </div>
             </div>
@@ -332,7 +330,7 @@ export default function Operations() {
                 <Tooltip
                   contentStyle={{ backgroundColor: 'rgba(17,17,30,0.95)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', fontSize: '12px', color: '#e5e7eb' }}
                 />
-                <Bar dataKey="count" radius={[8, 8, 0, 0]} animationDuration={reducedMotion.current ? 0 : 800}>
+                <Bar dataKey="count" radius={[8, 8, 0, 0]} animationDuration={prefersReducedMotion ? 0 : 800}>
                   {INCIDENT_CATEGORIES.map((entry, i) => (
                     <Cell key={i} fill={entry.color} fillOpacity={0.8} />
                   ))}

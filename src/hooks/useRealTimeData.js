@@ -136,7 +136,7 @@ export function useRealTimeData({ interval = 3000, enabled = true } = {}) {
   }, []);
 
   useEffect(() => {
-    if (!enabled) return;
+    if (!enabled) {return;}
 
     intervalRef.current = setInterval(refresh, interval);
     return () => {

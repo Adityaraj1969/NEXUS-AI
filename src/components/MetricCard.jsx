@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import {  useState, useEffect , useMemo } from 'react';
 import { TrendingUp, TrendingDown } from 'lucide-react';
 import { LineChart, Line, ResponsiveContainer } from 'recharts';
 

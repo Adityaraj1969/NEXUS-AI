@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
@@ -147,9 +147,7 @@ export default function Dashboard({ language = 'en' }) {
   const [briefing, setBriefing] = useState(AI_BRIEFINGS[0]);
   const [briefingLoading, setBriefingLoading] = useState(false);
   const briefingIndex = useRef(0);
-  const reducedMotion = useRef(
-    typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches
-  );
+  const prefersReducedMotion = useMemo(() => typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches, []);
 
   /** Simulate AI briefing refresh */
   const refreshBriefing = useCallback(() => {
@@ -228,7 +226,7 @@ export default function Dashboard({ language = 'en' }) {
                 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 disabled:opacity-50"
               aria-label="Refresh AI briefing"
             >
-              <RefreshCw className={`h-4 w-4 ${briefingLoading && !reducedMotion.current ? 'animate-spin' : ''}`} aria-hidden="true" />
+              <RefreshCw className={`h-4 w-4 ${briefingLoading && !prefersReducedMotion ? 'animate-spin' : ''}`} aria-hidden="true" />
             </button>
           </div>
 
@@ -275,7 +273,7 @@ export default function Dashboard({ language = 'en' }) {
                 contentStyle={{ backgroundColor: 'rgba(17,17,30,0.95)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', fontSize: '12px', color: '#e5e7eb' }}
                 formatter={(val) => [val.toLocaleString(), 'Attendance']}
               />
-              <Area type="monotone" dataKey="attendance" stroke="#a855f7" strokeWidth={2} fill="url(#attendanceGradient)" animationDuration={reducedMotion.current ? 0 : 800} />
+              <Area type="monotone" dataKey="attendance" stroke="#a855f7" strokeWidth={2} fill="url(#attendanceGradient)" animationDuration={prefersReducedMotion ? 0 : 800} />
             </AreaChart>
           </ResponsiveContainer>
         </GlassCard>

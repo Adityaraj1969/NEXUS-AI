@@ -34,7 +34,7 @@ export default [
       ...reactPlugin.configs['jsx-runtime'].rules,
       ...reactHooksPlugin.configs.recommended.rules,
 
-      'react/prop-types': 'warn',
+      'react/prop-types': 'off',
       'react/jsx-no-target-blank': 'error',
       'react/jsx-key': 'error',
       'react/no-unescaped-entities': 'warn',

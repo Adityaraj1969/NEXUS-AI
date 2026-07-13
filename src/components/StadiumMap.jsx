@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import {  useState, useCallback , useMemo } from 'react';
 
 /**
  * @fileoverview Interactive SVG stadium map with clickable zones.
@@ -19,9 +19,9 @@ const DEFAULT_ZONES = [
  * @returns {string} Fill color
  */
 function getDensityColor(density) {
-  if (density > 85) return 'rgba(239, 68, 68, 0.6)';
-  if (density > 65) return 'rgba(245, 158, 11, 0.5)';
-  if (density > 40) return 'rgba(234, 179, 8, 0.4)';
+  if (density > 85) {return 'rgba(239, 68, 68, 0.6)';}
+  if (density > 65) {return 'rgba(245, 158, 11, 0.5)';}
+  if (density > 40) {return 'rgba(234, 179, 8, 0.4)';}
   return 'rgba(16, 185, 129, 0.4)';
 }
 

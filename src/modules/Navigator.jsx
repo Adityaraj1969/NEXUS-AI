@@ -145,7 +145,7 @@ export default function Navigator() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const filteredDestinations = useMemo(() => {
-    if (!searchQuery) return DESTINATIONS;
+    if (!searchQuery) {return DESTINATIONS;}
     const q = searchQuery.toLowerCase();
     return DESTINATIONS.filter(d => d.label.toLowerCase().includes(q) || d.zone.toLowerCase().includes(q));
   }, [searchQuery]);
@@ -160,7 +160,7 @@ export default function Navigator() {
 
   /** Simulate AI route generation */
   const handleFindRoute = useCallback(() => {
-    if (!destination) return;
+    if (!destination) {return;}
     setRouteLoading(true);
     setRoute(null);
     setTimeout(() => {

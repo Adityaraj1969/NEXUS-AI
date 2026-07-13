@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useMemo, useCallback } from 'react';
 import { X } from 'lucide-react';
 
 /**
@@ -36,7 +36,7 @@ export default function Modal({ isOpen, onClose, title, children, size = 'md' })
       const focusable = dialogRef.current?.querySelectorAll(
         'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
       );
-      if (!focusable || focusable.length === 0) return;
+      if (!focusable || focusable.length === 0) {return;}
       const first = focusable[0];
       const last = focusable[focusable.length - 1];
 
@@ -63,12 +63,12 @@ export default function Modal({ isOpen, onClose, title, children, size = 'md' })
     return () => { document.body.style.overflow = ''; };
   }, [isOpen]);
 
-  if (!isOpen) return null;
+  if (!isOpen) {return null;}
 
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+      onClick={(e) => { if (e.target === e.currentTarget) {onClose();} }}
       role="presentation"
     >
       {/* Overlay */}

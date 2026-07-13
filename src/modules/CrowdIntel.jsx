@@ -6,8 +6,10 @@ import {
 import {
   Users, AlertTriangle, TrendingUp, TrendingDown, Brain,
   RefreshCw, Clock, Zap, MapPin, ChevronRight, Loader2,
-  ShieldAlert, UserPlus, ArrowUpRight, ArrowDownRight
+  ShieldAlert, UserPlus, ArrowUpRight, ArrowDownRight, Camera, UploadCloud
 } from 'lucide-react';
+import PropTypes from 'prop-types';
+import { geminiClient } from '../services/gemini.js';
 
 /** ─── CONSTANTS ─── */
 const ZONE_COUNT = 8;
@@ -89,7 +91,11 @@ const STAFF_RECOMMENDATIONS = [
 
 /**
  * GlassCard — glassmorphism container
- * @param {{ children: React.ReactNode, className?: string, role?: string, ariaLabel?: string }} props
+ * @param {Object} props
+ * @param {React.ReactNode} props.children
+ * @param {string} [props.className]
+ * @param {string} [props.role]
+ * @param {string} [props.ariaLabel]
  */
 function GlassCard({ children, className = '', role, ariaLabel }) {
   return (
@@ -100,9 +106,17 @@ function GlassCard({ children, className = '', role, ariaLabel }) {
   );
 }
 
+GlassCard.propTypes = {
+  children: PropTypes.node.isRequired,
+  className: PropTypes.string,
+  role: PropTypes.string,
+  ariaLabel: PropTypes.string,
+};
+
 /**
  * DensityIndicator — colored density threshold badge
- * @param {{ pct: number }} props
+ * @param {Object} props
+ * @param {number} props.pct
  */
 function DensityIndicator({ pct }) {
   const level = pct >= THRESHOLD_YELLOW ? 'critical' : pct >= THRESHOLD_GREEN ? 'caution' : 'normal';
@@ -118,6 +132,15 @@ function DensityIndicator({ pct }) {
   );
 }
 
+DensityIndicator.propTypes = {
+  pct: PropTypes.number.isRequired,
+};
+
+/**
+ * HeatmapGrid — renders a visual grid of crowd density
+ * @param {Object} props
+ * @param {Array<Object>} props.zones
+ */
 function HeatmapGrid({ zones }) {
   return (
     <div className="grid grid-cols-8 gap-0.5 sm:gap-1" role="img" aria-label="Crowd density heatmap">
@@ -139,6 +162,10 @@ function HeatmapGrid({ zones }) {
   );
 }
 
+HeatmapGrid.propTypes = {
+  zones: PropTypes.array.isRequired,
+};
+
 /**
  * CrowdIntel — crowd management intelligence dashboard
  * Features: heatmap, zone status with RadialBarChart, AI predictions, staff recommendations,
@@ -151,9 +178,7 @@ export default function CrowdIntel() {
   const [predictions, setPredictions] = useState(null);
   const [predictionLoading, setPredictionLoading] = useState(false);
   const [selectedZone, setSelectedZone] = useState(null);
-  const reducedMotion = useRef(
-    typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches
-  );
+  const prefersReducedMotion = useMemo(() => typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches, []);
 
   /** Update zone data every 8 seconds */
   useEffect(() => {
@@ -168,14 +193,40 @@ export default function CrowdIntel() {
   }, []);
 
   /** Generate AI predictions */
-  const handleGeneratePrediction = useCallback(() => {
+  const handleGeneratePrediction = useCallback(async (imageData = null) => {
     setPredictionLoading(true);
     setPredictions(null);
-    setTimeout(() => {
+    try {
+      const prompt = `Analyze current stadium metrics. Generate a 15, 30, and 60-minute prediction.
+Return ONLY a JSON array of 3 objects with these exact keys: timeframe (string like '15 min'), density (string with % and +/- sign), direction (string 'up' or 'down'), detail (string), risk (string 'low', 'medium', or 'high').
+${imageData ? 'I have attached an image from the stadium CCTV. Analyze the crowd density in the image and adjust your predictions accordingly.' : ''}`;
+      
+      const response = await geminiClient.generateJSON(prompt, 'crowd', imageData);
+      
+      if (Array.isArray(response) && response.length === 3) {
+        setPredictions(response);
+      } else {
+        setPredictions(AI_PREDICTIONS);
+      }
+    } catch (err) {
+      console.error(err);
       setPredictions(AI_PREDICTIONS);
+    } finally {
       setPredictionLoading(false);
-    }, 2000);
+    }
   }, []);
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) {return;}
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const base64Str = event.target.result.split(',')[1];
+      handleGeneratePrediction({ base64: base64Str, mimeType: file.type });
+    };
+    reader.readAsDataURL(file);
+  };
 
   /** Prepare radial bar data for a zone */
   const getRadialData = useCallback((zone) => [
@@ -262,7 +313,7 @@ export default function CrowdIntel() {
                           background={{ fill: 'rgba(255,255,255,0.05)' }}
                           dataKey="value"
                           cornerRadius={10}
-                          animationDuration={reducedMotion.current ? 0 : 600}
+                          animationDuration={prefersReducedMotion ? 0 : 600}
                         />
                       </RadialBarChart>
                     </ResponsiveContainer>
@@ -293,9 +344,9 @@ export default function CrowdIntel() {
                   contentStyle={{ backgroundColor: 'rgba(17,17,30,0.95)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', fontSize: '12px', color: '#e5e7eb' }}
                 />
                 <Legend wrapperStyle={{ fontSize: '10px' }} />
-                <Line type="monotone" dataKey="today" stroke="#a855f7" strokeWidth={2} dot={false} name="Today" animationDuration={reducedMotion.current ? 0 : 800} />
-                <Line type="monotone" dataKey="lastMatch" stroke="#2dd4bf" strokeWidth={2} dot={false} name="Last Match" strokeDasharray="5 5" animationDuration={reducedMotion.current ? 0 : 800} />
-                <Line type="monotone" dataKey="average" stroke="#6b7280" strokeWidth={1} dot={false} name="Season Avg" strokeDasharray="3 3" animationDuration={reducedMotion.current ? 0 : 800} />
+                <Line type="monotone" dataKey="today" stroke="#a855f7" strokeWidth={2} dot={false} name="Today" animationDuration={prefersReducedMotion ? 0 : 800} />
+                <Line type="monotone" dataKey="lastMatch" stroke="#2dd4bf" strokeWidth={2} dot={false} name="Last Match" strokeDasharray="5 5" animationDuration={prefersReducedMotion ? 0 : 800} />
+                <Line type="monotone" dataKey="average" stroke="#6b7280" strokeWidth={1} dot={false} name="Season Avg" strokeDasharray="3 3" animationDuration={prefersReducedMotion ? 0 : 800} />
               </LineChart>
             </ResponsiveContainer>
           </GlassCard>
@@ -326,6 +377,19 @@ export default function CrowdIntel() {
                 <><Zap className="h-4 w-4" aria-hidden="true" /> Generate Prediction</>
               )}
             </button>
+            <div className="mb-4">
+              <label className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-teal-500/50 bg-teal-500/5 px-4 py-3 text-sm font-semibold text-teal-300 transition-all hover:bg-teal-500/10 focus-within:ring-2 focus-within:ring-teal-500">
+                <Camera className="h-4 w-4" aria-hidden="true" />
+                Analyze Camera Feed
+                <input 
+                  type="file" 
+                  accept="image/jpeg, image/png, image/webp" 
+                  className="sr-only" 
+                  onChange={handleFileUpload} 
+                  disabled={predictionLoading}
+                />
+              </label>
+            </div>
 
             {predictions && (
               <div className="space-y-3" aria-live="polite">

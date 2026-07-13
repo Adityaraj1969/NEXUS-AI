@@ -152,9 +152,9 @@ export default function Transport() {
   const [departureTime, setDepartureTime] = useState('18:30');
   const [journeyResult, setJourneyResult] = useState(null);
   const [journeyLoading, setJourneyLoading] = useState(false);
-  const reducedMotion = useRef(
-    typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches
-  );
+  const prefersReducedMotion = useMemo(() => {
+    return typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
+  }, []);
 
   const surgeMultiplier = 2.4;
   const totalParking = useMemo(() => PARKING_DATA.reduce((s, d) => s + d.value, 0), []);
@@ -163,7 +163,7 @@ export default function Transport() {
 
   /** Simulate journey planning */
   const handlePlanJourney = useCallback(() => {
-    if (!origin) return;
+    if (!origin) {return;}
     setJourneyLoading(true);
     setJourneyResult(null);
 
@@ -336,7 +336,7 @@ export default function Transport() {
                   contentStyle={{ backgroundColor: 'rgba(17,17,30,0.95)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', fontSize: '12px', color: '#e5e7eb' }}
                   formatter={(val) => [`${val} min`, 'Travel Time']}
                 />
-                <Bar dataKey="time" radius={[8, 8, 0, 0]} animationDuration={reducedMotion.current ? 0 : 800}>
+                <Bar dataKey="time" radius={[8, 8, 0, 0]} animationDuration={prefersReducedMotion ? 0 : 800}>
                   {TRAVEL_TIME_DATA.map((entry, i) => (
                     <Cell key={i} fill={entry.color} fillOpacity={0.8} />
                   ))}
@@ -387,7 +387,7 @@ export default function Transport() {
                     outerRadius={80}
                     paddingAngle={3}
                     dataKey="value"
-                    animationDuration={reducedMotion.current ? 0 : 800}
+                    animationDuration={prefersReducedMotion ? 0 : 800}
                   >
                     {PARKING_DATA.map((entry, i) => (
                       <Cell key={i} fill={entry.fill} fillOpacity={0.8} />

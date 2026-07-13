@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useMemo, useEffect } from 'react';
 import { Globe, ChevronDown } from 'lucide-react';
 
 /**
@@ -31,7 +31,7 @@ export default function LanguageSelector({ value = 'en', onChange, className = '
 
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+      if (ref.current && !ref.current.contains(e.target)) {setOpen(false);}
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);

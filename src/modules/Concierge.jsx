@@ -1,10 +1,11 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import DOMPurify from 'dompurify';
 import {
   MessageSquare, Send, Globe, Loader2, Sparkles, MapPin,
   Calendar, Accessibility, HelpCircle, Bot, User, ChevronDown,
-  Volume2, Mic, RotateCcw, Info, CheckCircle2
+  Volume2, Mic, RotateCcw, Info, CheckCircle2, MicOff
 } from 'lucide-react';
+import PropTypes from 'prop-types';
 import { geminiClient } from '../services/gemini';
 
 /** ─── CONSTANTS ─── */
@@ -36,7 +37,9 @@ const WELCOME_MESSAGE = {
 
 /**
  * GlassCard — glassmorphism container
- * @param {{ children: React.ReactNode, className?: string }} props
+ * @param {Object} props
+ * @param {React.ReactNode} props.children
+ * @param {string} [props.className]
  */
 function GlassCard({ children, className = '' }) {
   return (
@@ -46,9 +49,18 @@ function GlassCard({ children, className = '' }) {
   );
 }
 
+GlassCard.propTypes = {
+  children: PropTypes.node.isRequired,
+  className: PropTypes.string,
+};
+
 /**
  * ChatBubble — individual message bubble
- * @param {{ message: { role: string, content: string, timestamp: string } }} props
+ * @param {Object} props
+ * @param {Object} props.message
+ * @param {string} props.message.role
+ * @param {string} props.message.content
+ * @param {string} props.message.timestamp
  */
 function ChatBubble({ message }) {
   const isUser = message.role === 'user';
@@ -94,6 +106,15 @@ function ChatBubble({ message }) {
   );
 }
 
+ChatBubble.propTypes = {
+  message: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    role: PropTypes.string.isRequired,
+    content: PropTypes.string.isRequired,
+    timestamp: PropTypes.string.isRequired,
+  }).isRequired,
+};
+
 /**
  * TypingIndicator — animated dots showing AI is processing
  * @returns {JSX.Element}
@@ -118,27 +139,59 @@ function TypingIndicator() {
 /**
  * Concierge — AI chatbot concierge interface for FIFA World Cup 2026
  * Features: chat interface, quick actions, 7-language support, typing indicator,
- * scrollable history, and simulated Gemini AI responses.
+ * scrollable history, simulated Gemini AI responses, and Speech-to-Text.
+ * @param {Object} props
+ * @param {string} props.language - Language code
  * @returns {JSX.Element}
  */
 export default function Concierge({ language = 'en' }) {
   const [messages, setMessages] = useState([WELCOME_MESSAGE]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [isListening, setIsListening] = useState(false);
   const chatEndRef = useRef(null);
   const inputRef = useRef(null);
+  const recognitionRef = useRef(null);
 
   /** Scroll to bottom when messages change */
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isTyping]);
 
+  /** Initialize Web Speech API */
+  useEffect(() => {
+    if (typeof window !== 'undefined' && ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognitionRef.current = new SpeechRecognition();
+      recognitionRef.current.continuous = false;
+      recognitionRef.current.interimResults = false;
+      
+      recognitionRef.current.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        setInput(prev => prev + ' ' + transcript);
+      };
+      
+      recognitionRef.current.onend = () => setIsListening(false);
+      recognitionRef.current.onerror = () => setIsListening(false);
+    }
+  }, []);
 
+  const toggleListening = useCallback(() => {
+    if (!recognitionRef.current) {return;}
+    if (isListening) {
+      recognitionRef.current.stop();
+      setIsListening(false);
+    } else {
+      recognitionRef.current.lang = language === 'en' ? 'en-US' : language;
+      recognitionRef.current.start();
+      setIsListening(true);
+    }
+  }, [isListening, language]);
 
   /** Send message handler */
   const handleSend = useCallback(async (text) => {
     const sanitizedText = DOMPurify.sanitize(text || input).trim();
-    if (!sanitizedText) return;
+    if (!sanitizedText) {return;}
 
     const userMsg = {
       id: `user-${Date.now()}`,
@@ -301,6 +354,17 @@ export default function Concierge({ language = 'en' }) {
                   disabled={isTyping}
                 />
               </div>
+              
+              <button
+                onClick={toggleListening}
+                disabled={isTyping || !recognitionRef.current}
+                className={`flex h-[46px] w-[46px] shrink-0 items-center justify-center rounded-xl transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed
+                  ${isListening ? 'bg-red-500/20 text-red-400 border border-red-500/50 animate-pulse' : 'bg-white/5 text-gray-400 border border-white/10 hover:bg-white/10'}`}
+                aria-label={isListening ? "Stop listening" : "Start speaking"}
+              >
+                {isListening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+              </button>
+
               <button
                 onClick={() => handleSend()}
                 disabled={!input.trim() || isTyping}
@@ -324,3 +388,7 @@ export default function Concierge({ language = 'en' }) {
     </main>
   );
 }
+
+Concierge.propTypes = {
+  language: PropTypes.string,
+};

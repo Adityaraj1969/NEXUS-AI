@@ -37,7 +37,7 @@ const SANITIZE_CONFIG = Object.freeze({
  * ```
  */
 export function sanitize(html) {
-  if (typeof html !== 'string') return '';
+  if (typeof html !== 'string') {return '';}
   return DOMPurify.sanitize(html, SANITIZE_CONFIG);
 }
 

@@ -34,7 +34,7 @@ export default function Heatmap({ data = [], width = 400, height = 300, maxInten
   const canvasRef = useRef(null);
 
   const avgIntensity = useMemo(() => {
-    if (data.length === 0) return 0;
+    if (data.length === 0) {return 0;}
     return Math.round(data.reduce((s, d) => s + d.intensity, 0) / data.length);
   }, [data]);
 
@@ -42,7 +42,7 @@ export default function Heatmap({ data = [], width = 400, height = 300, maxInten
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas) {return;}
     const ctx = canvas.getContext('2d');
 
     // Scale for device pixel ratio

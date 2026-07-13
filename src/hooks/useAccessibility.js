@@ -124,7 +124,7 @@ export function useAccessibility() {
         const stored = localStorage.getItem(STORAGE_KEY);
         if (stored) {
           const parsed = JSON.parse(stored);
-          if (typeof parsed.reducedMotion === 'boolean') return prev;
+          if (typeof parsed.reducedMotion === 'boolean') {return prev;}
         }
         return { ...prev, reducedMotion: e.matches };
       });

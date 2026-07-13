@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useMemo } from 'react';
 import DOMPurify from 'dompurify';
 import {
   Accessibility as AccessibilityIcon, Eye, Ear, Brain,
@@ -109,7 +109,7 @@ export default function Accessibility() {
   /** Submit feedback */
   const handleSubmitFeedback = useCallback(() => {
     const cleanText = DOMPurify.sanitize(feedbackText.trim());
-    if (!feedbackRating || !cleanText) return;
+    if (!feedbackRating || !cleanText) {return;}
 
     setFeedbackLoading(true);
     setTimeout(() => {
@@ -124,6 +124,12 @@ export default function Accessibility() {
     setFeedbackText('');
     setFeedbackSubmitted(false);
   }, []);
+
+  const [ROUTE_DATA] = useState(() => ({
+    standard: Math.round(3 + Math.random() * 5),
+    wheelchair: Math.round(5 + Math.random() * 7),
+    visual: Math.round(6 + Math.random() * 6),
+  }));
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-950 via-purple-950/30 to-gray-950 p-4 md:p-6 lg:p-8" role="main" aria-label="Accessibility Center">

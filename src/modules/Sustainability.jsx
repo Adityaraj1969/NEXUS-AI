@@ -152,9 +152,7 @@ export default function Sustainability() {
   const [waterData] = useState(generateWaterData);
   const [insights, setInsights] = useState(AI_SUSTAINABILITY_INSIGHTS.slice(0, 3));
   const [insightLoading, setInsightLoading] = useState(false);
-  const reducedMotion = useRef(
-    typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches
-  );
+  const prefersReducedMotion = useMemo(() => typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches, []);
 
   const totalEnergy = useMemo(() => energyData.reduce((s, d) => s + d.consumption, 0).toFixed(1), [energyData]);
   const totalSolar = useMemo(() => energyData.reduce((s, d) => s + d.solar, 0).toFixed(1), [energyData]);
@@ -234,9 +232,9 @@ export default function Sustainability() {
                   contentStyle={{ backgroundColor: 'rgba(17,17,30,0.95)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', fontSize: '12px', color: '#e5e7eb' }}
                 />
                 <Legend wrapperStyle={{ fontSize: '10px' }} />
-                <Area type="monotone" dataKey="consumption" stroke="#f59e0b" strokeWidth={2} fill="url(#energyGradient)" name="Grid Usage" animationDuration={reducedMotion.current ? 0 : 800} />
-                <Area type="monotone" dataKey="solar" stroke="#2dd4bf" strokeWidth={2} fill="url(#solarGradient)" name="Solar" animationDuration={reducedMotion.current ? 0 : 800} />
-                <Line type="monotone" dataKey="baseline" stroke="#6b7280" strokeWidth={1} strokeDasharray="5 5" dot={false} name="Baseline" animationDuration={reducedMotion.current ? 0 : 800} />
+                <Area type="monotone" dataKey="consumption" stroke="#f59e0b" strokeWidth={2} fill="url(#energyGradient)" name="Grid Usage" animationDuration={prefersReducedMotion ? 0 : 800} />
+                <Area type="monotone" dataKey="solar" stroke="#2dd4bf" strokeWidth={2} fill="url(#solarGradient)" name="Solar" animationDuration={prefersReducedMotion ? 0 : 800} />
+                <Line type="monotone" dataKey="baseline" stroke="#6b7280" strokeWidth={1} strokeDasharray="5 5" dot={false} name="Baseline" animationDuration={prefersReducedMotion ? 0 : 800} />
               </AreaChart>
             </ResponsiveContainer>
           </GlassCard>
@@ -253,7 +251,7 @@ export default function Sustainability() {
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie data={WASTE_DATA} cx="50%" cy="50%" innerRadius={45} outerRadius={70} paddingAngle={3} dataKey="value"
-                      animationDuration={reducedMotion.current ? 0 : 800}>
+                      animationDuration={prefersReducedMotion ? 0 : 800}>
                       {WASTE_DATA.map((entry, i) => <Cell key={i} fill={entry.fill} fillOpacity={0.8} />)}
                     </Pie>
                     <Tooltip
@@ -287,9 +285,9 @@ export default function Sustainability() {
                   <Tooltip
                     contentStyle={{ backgroundColor: 'rgba(17,17,30,0.95)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', fontSize: '12px', color: '#e5e7eb' }}
                   />
-                  <Line type="monotone" dataKey="usage" stroke="#3b82f6" strokeWidth={2} dot={false} name="Usage (kL)" animationDuration={reducedMotion.current ? 0 : 800} />
-                  <Line type="monotone" dataKey="recycled" stroke="#2dd4bf" strokeWidth={2} dot={false} name="Recycled (kL)" animationDuration={reducedMotion.current ? 0 : 800} />
-                  <Line type="monotone" dataKey="target" stroke="#6b7280" strokeWidth={1} strokeDasharray="5 5" dot={false} name="Target" animationDuration={reducedMotion.current ? 0 : 800} />
+                  <Line type="monotone" dataKey="usage" stroke="#3b82f6" strokeWidth={2} dot={false} name="Usage (kL)" animationDuration={prefersReducedMotion ? 0 : 800} />
+                  <Line type="monotone" dataKey="recycled" stroke="#2dd4bf" strokeWidth={2} dot={false} name="Recycled (kL)" animationDuration={prefersReducedMotion ? 0 : 800} />
+                  <Line type="monotone" dataKey="target" stroke="#6b7280" strokeWidth={1} strokeDasharray="5 5" dot={false} name="Target" animationDuration={prefersReducedMotion ? 0 : 800} />
                 </LineChart>
               </ResponsiveContainer>
             </GlassCard>
@@ -312,7 +310,7 @@ export default function Sustainability() {
                   focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 disabled:opacity-50"
                 aria-label="Refresh recommendations"
               >
-                <RefreshCw className={`h-4 w-4 ${insightLoading && !reducedMotion.current ? 'animate-spin' : ''}`} aria-hidden="true" />
+                <RefreshCw className={`h-4 w-4 ${insightLoading && !prefersReducedMotion ? 'animate-spin' : ''}`} aria-hidden="true" />
               </button>
             </div>
 
