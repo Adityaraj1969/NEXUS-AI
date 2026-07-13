@@ -297,7 +297,7 @@ export default function Concierge({ language = 'en' }) {
           {/* Messages Area */}
           <div className="flex-1 overflow-y-auto px-5 py-4" role="list" aria-label="Chat messages" aria-live="polite">
             <div className="space-y-4">
-              {messages.map((msg) => (
+              {messages.map((msg, _i) => (
                 <ChatBubble key={msg.id} message={msg} />
               ))}
               {isTyping && <TypingIndicator />}

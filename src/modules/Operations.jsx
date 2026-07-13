@@ -190,6 +190,7 @@ export default function Operations() {
   }, [selectedProtocol]);
 
   const criticalCount = useMemo(() => events.filter(e => e.severity === 'critical').length, [events]);
+  const highCount = useMemo(() => events.filter(e => e.severity === 'high').length, [events]);
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-950 via-red-950/10 to-gray-950 p-4 md:p-6 lg:p-8" role="main" aria-label="Operations Command Center">
