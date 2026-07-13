@@ -9,6 +9,7 @@
 ![Gemini](https://img.shields.io/badge/Gemini-2.5_Flash-orange.svg)
 ![Tailwind](https://img.shields.io/badge/Tailwind-v4-blue.svg)
 ![Accessibility](https://img.shields.io/badge/WCAG-2.1_AA-green.svg)
+[![Live Demo](https://img.shields.io/badge/Live_Demo-Vercel-black?logo=vercel&logoColor=white)](https://nexus-ai-omega-ochre.vercel.app/)
 
 ---
 
