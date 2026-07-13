@@ -11,6 +11,7 @@
 ![Accessibility](https://img.shields.io/badge/WCAG-2.1_AA-green.svg)
 [![Live Demo](https://img.shields.io/badge/Live_Demo-Vercel-black?logo=vercel&logoColor=white)](https://nexus-ai-omega-ochre.vercel.app/)
 
+**Live URL:** [https://nexus-ai-omega-ochre.vercel.app/](https://nexus-ai-omega-ochre.vercel.app/)
 ---
 
 ## 📋 Table of Contents
@@ -183,7 +184,7 @@ Wheelchair-accessible route planner, sensory-friendly zone finder, companion sea
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/nexus-ai.git
+git clone https://github.com/Adityaraj1969/nexus-ai.git
 cd nexus-ai
 
 # Install dependencies
