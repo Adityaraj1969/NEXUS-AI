@@ -5,6 +5,7 @@ import {
   Calendar, Accessibility, HelpCircle, Bot, User, ChevronDown,
   Volume2, Mic, RotateCcw, Info, CheckCircle2
 } from 'lucide-react';
+import { geminiClient } from '../services/gemini';
 
 /** ─── CONSTANTS ─── */
 const LANGUAGES = [
@@ -24,15 +25,7 @@ const QUICK_ACTIONS = [
   { label: 'Help with wheelchair access', icon: Accessibility },
 ];
 
-const AI_RESPONSES = {
-  'Where is Gate A?': `**Gate A** is located on the **North side** of MetLife Stadium. From your current location in Section 118:\n\n1. Head toward the main concourse (turn left)\n2. Follow signage for "North Gate"\n3. Gate A is approximately **120 meters** ahead\n\n⏱️ Estimated walk time: **3 minutes**\n\nWould you like me to show you the route on the map?`,
 
-  'Next match?': `🏟️ **Next Match at MetLife Stadium:**\n\n**USA 🇺🇸 vs Brazil 🇧🇷**\n📅 Today, July 6, 2026 — 8:00 PM ET\n🏆 FIFA World Cup 2026 — Semi-Final\n👥 Expected attendance: ~82,000\n🚪 Gates open: 5:30 PM ET\n\n**Upcoming matches at this venue:**\n• July 10 — 3rd Place Match (7:00 PM)\n• July 14 — **FINAL** (4:00 PM)`,
-
-  'Nearest restroom?': `The nearest restroom facilities to your location (Section 118, Row 12):\n\n🚻 **Restroom A-12** — 35 meters (North Concourse)\n   • Wait time: ~2 minutes\n   • Accessible stalls: ✅ Available\n\n🚻 **Restroom A-14** — 60 meters (East Concourse)\n   • Wait time: ~5 minutes\n   • Accessible stalls: ✅ Available\n\n🚻 **Family Restroom** — 80 meters (North-East)\n   • Wait time: ~1 minute\n   • Baby changing station: ✅`,
-
-  'Help with wheelchair access': `♿ **Wheelchair Accessibility at MetLife Stadium:**\n\nFrom your location, the nearest accessible features:\n\n🛗 **Elevator Bank C** — 25 meters ahead\n   • Serves all levels, wide-entry doors\n\n♿ **Accessible Seating — Section 100** — Level 1\n   • Companion seating available\n   • Clear sightlines guaranteed\n\n🅿️ **Accessible Parking** — Lot A (closest to Gate A)\n\n📞 Need personal assistance? Text **ASSIST** to 2026 or press the accessibility button on any info kiosk.\n\nWould you like me to plan a wheelchair-accessible route?`,
-};
 
 const WELCOME_MESSAGE = {
   id: 'welcome',
@@ -140,32 +133,10 @@ export default function Concierge({ language = 'en' }) {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isTyping]);
 
-  /** Simulate AI response */
-  const getAIResponse = useCallback((userMessage) => {
-    // Check for known responses first
-    const knownKey = Object.keys(AI_RESPONSES).find(k =>
-      userMessage.toLowerCase().includes(k.toLowerCase().replace('?', ''))
-    );
 
-    if (knownKey) return AI_RESPONSES[knownKey];
-
-    // Generic fallback with simulated multilingual awareness
-    const prefixes = {
-      en: "Thank you for your question! I understand you're asking about:",
-      es: "¡Gracias por su pregunta! Entiendo que pregunta sobre:",
-      fr: "Merci pour votre question ! Je comprends que vous demandez :",
-      de: "Danke für Ihre Frage! Ich verstehe, Sie fragen nach:",
-      ar: "شكرا لسؤالك! أفهم أنك تسأل عن:",
-      pt: "Obrigado pela sua pergunta! Eu entendo que você está perguntando sobre:",
-      ru: "Спасибо за ваш вопрос! Я понимаю, что вы спрашиваете о:"
-    };
-    const prefix = prefixes[language] || prefixes.en;
-    
-    return `${prefix} "${userMessage}"\n\nAt the FIFA World Cup 2026™ here at MetLife Stadium, I can assist with navigation, match info, accessibility, transport, and concessions.\n\nCould you be more specific so I can provide the most helpful answer?`;
-  }, [language]);
 
   /** Send message handler */
-  const handleSend = useCallback((text) => {
+  const handleSend = useCallback(async (text) => {
     const sanitizedText = DOMPurify.sanitize(text || input).trim();
     if (!sanitizedText) return;
 
@@ -180,20 +151,28 @@ export default function Concierge({ language = 'en' }) {
     setInput('');
     setIsTyping(true);
 
-    // Simulate AI thinking
-    const delay = 1200 + Math.random() * 1500;
-    setTimeout(() => {
-      const response = getAIResponse(sanitizedText);
+    try {
+      const responseText = await geminiClient.chat(sanitizedText, language);
       const aiMsg = {
         id: `ai-${Date.now()}`,
         role: 'assistant',
-        content: response,
+        content: responseText,
         timestamp: new Date().toISOString(),
       };
       setMessages(prev => [...prev, aiMsg]);
+    } catch (error) {
+      console.error('[NEXUS AI] Chat error:', error);
+      const aiMsg = {
+        id: `ai-${Date.now()}`,
+        role: 'assistant',
+        content: 'I apologize, but I encountered an error processing your request. Please try again.',
+        timestamp: new Date().toISOString(),
+      };
+      setMessages(prev => [...prev, aiMsg]);
+    } finally {
       setIsTyping(false);
-    }, delay);
-  }, [input, getAIResponse]);
+    }
+  }, [input, language]);
 
   /** Handle Enter key */
   const handleKeyDown = useCallback((e) => {
