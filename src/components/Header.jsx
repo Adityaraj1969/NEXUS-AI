@@ -1,4 +1,4 @@
-import {  useState, useEffect  } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Bell, Globe, Eye, Wifi, WifiOff, Clock } from 'lucide-react';
 import { geminiClient } from '../services/gemini';
@@ -46,14 +46,27 @@ export default function Header({
   language = 'en',
   onLanguageChange,
   onToggleA11y,
-  notificationCount = 3,
+  notificationCount = 0,
 }) {
   const location = useLocation();
   const [clock, setClock] = useState('');
   const [showLangDropdown, setShowLangDropdown] = useState(false);
+  const langDropdownRef = useRef(null);
   const isLive = geminiClient.isLiveMode;
   const title = ROUTE_TITLES[location.pathname] || 'NEXUS AI';
   const currentLang = LANGUAGES.find((l) => l.code === language) || LANGUAGES[0];
+
+  // Close language dropdown on outside click
+  useEffect(() => {
+    if (!showLangDropdown) return;
+    const handleClickOutside = (e) => {
+      if (langDropdownRef.current && !langDropdownRef.current.contains(e.target)) {
+        setShowLangDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showLangDropdown]);
 
   useEffect(() => {
     const updateClock = () => {
@@ -89,7 +102,6 @@ export default function Header({
         <div
           className="hidden items-center gap-1.5 rounded-lg bg-white/5 px-3 py-1.5
             text-xs text-nexus-text-secondary sm:flex"
-          aria-live="polite"
           aria-label={`Current time: ${clock}`}
         >
           <Clock className="h-3.5 w-3.5" aria-hidden="true" />
@@ -97,16 +109,11 @@ export default function Header({
         </div>
 
         {/* AI Mode Badge */}
-        <button
-          onClick={() => {
-            window.dispatchEvent(new CustomEvent('nexus-toast', { 
-              detail: { message: `AI Mode switched to ${isLive ? 'Simulation' : 'Live'}`, type: 'success' } 
-            }));
-          }}
-          className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium cursor-pointer transition-colors ${
+        <div
+          className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${
             isLive
-              ? 'bg-emerald-500/15 text-emerald-400 hover:bg-emerald-500/25'
-              : 'bg-amber-500/15 text-amber-400 hover:bg-amber-500/25'
+              ? 'bg-emerald-500/15 text-emerald-400'
+              : 'bg-amber-500/15 text-amber-400'
           }`}
           role="status"
           aria-label={`AI Mode: ${isLive ? 'Live' : 'Simulation'}`}
@@ -117,10 +124,10 @@ export default function Header({
             <WifiOff className="h-3 w-3" aria-hidden="true" />
           )}
           <span className="hidden sm:inline">{isLive ? 'Live' : 'Sim'}</span>
-        </button>
+        </div>
 
         {/* Language Selector */}
-        <div className="relative">
+        <div className="relative" ref={langDropdownRef}>
           <button
             onClick={() => setShowLangDropdown(!showLangDropdown)}
             aria-haspopup="listbox"

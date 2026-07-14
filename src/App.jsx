@@ -1,8 +1,10 @@
-import {  lazy, Suspense, useState, useEffect, useCallback  } from 'react';
+import { lazy, Suspense, useState, useEffect, useCallback, Component } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import Toast from './components/Toast';
+import AccessibilityPanel from './components/AccessibilityPanel';
+import { useAccessibility } from './hooks/useAccessibility';
 
 /**
  * @fileoverview Root application component for NEXUS AI.
@@ -38,27 +40,45 @@ function LoadingSkeleton() {
 }
 
 /**
- * Error boundary fallback component.
- * @param {Object} props
- * @param {Error} props.error
- * @returns {JSX.Element}
+ * React Error Boundary — catches rendering errors in child components.
+ * Uses class component as required by React's componentDidCatch API.
  */
-function ErrorFallback({ error }) {
-  return (
-    <div className="flex h-full items-center justify-center p-12" role="alert">
-      <div className="glass max-w-md rounded-2xl p-8 text-center">
-        <h2 className="mb-2 text-xl font-bold text-nexus-danger">Something went wrong</h2>
-        <p className="text-sm text-nexus-text-secondary">{error?.message || 'An unexpected error occurred'}</p>
-        <button
-          onClick={() => window.location.reload()}
-          className="mt-4 rounded-lg bg-nexus-primary px-4 py-2 text-sm font-medium text-white
-            transition-colors hover:bg-nexus-primary/80"
-        >
-          Reload Application
-        </button>
-      </div>
-    </div>
-  );
+class ErrorBoundary extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error('[NEXUS AI] Render error caught by ErrorBoundary:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="flex h-full items-center justify-center p-12" role="alert">
+          <div className="glass max-w-md rounded-2xl p-8 text-center">
+            <h2 className="mb-2 text-xl font-bold text-nexus-danger">Something went wrong</h2>
+            <p className="text-sm text-nexus-text-secondary">
+              {this.state.error?.message || 'An unexpected error occurred'}
+            </p>
+            <button
+              onClick={() => window.location.reload()}
+              className="mt-4 rounded-lg bg-nexus-primary px-4 py-2 text-sm font-medium text-white
+                transition-colors hover:bg-nexus-primary/80"
+            >
+              Reload Application
+            </button>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
 }
 
 /**
@@ -71,8 +91,8 @@ function App() {
   const [language, setLanguage] = useState('en');
   const [showA11yPanel, setShowA11yPanel] = useState(false);
   const [toasts, setToasts] = useState([]);
-  const [error, setError] = useState(null);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(window.innerWidth < 1024);
+  const { preferences, togglePreference, resetPreferences } = useAccessibility();
 
   useEffect(() => {
     const handleResize = () => {
@@ -99,19 +119,7 @@ function App() {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   }, []);
 
-  // Global error handler
-  useEffect(() => {
-    const handleError = (e) => {
-      console.error('[NEXUS AI] Uncaught error:', e.error);
-      setError(e.error);
-    };
-    window.addEventListener('error', handleError);
-    return () => window.removeEventListener('error', handleError);
-  }, []);
 
-  if (error) {
-    return <ErrorFallback error={error} />;
-  }
 
   return (
     <div
@@ -137,34 +145,65 @@ function App() {
         {/* Page Content */}
         <main
           id="main-content"
-          role="main"
           className="min-h-[calc(100vh-64px)] p-4 md:p-8 max-w-[1600px] mx-auto w-full"
         >
-          <Suspense fallback={<LoadingSkeleton />}>
-            <Routes>
-              <Route path="/" element={<Dashboard language={language} />} />
-              <Route path="/navigator" element={<Navigator />} />
-              <Route path="/crowd" element={<CrowdIntel />} />
-              <Route path="/concierge" element={<Concierge language={language} />} />
-              <Route path="/transport" element={<Transport />} />
-              <Route path="/sustainability" element={<Sustainability />} />
-              <Route path="/accessibility" element={<AccessibilityPage />} />
-              <Route path="/operations" element={<Operations />} />
-              <Route
-                path="*"
-                element={
-                  <div className="flex h-64 items-center justify-center">
-                    <div className="text-center">
-                      <h2 className="text-4xl font-bold text-nexus-text-primary">404</h2>
-                      <p className="mt-2 text-nexus-text-secondary">Page not found</p>
+          <ErrorBoundary>
+            <Suspense fallback={<LoadingSkeleton />}>
+              <Routes>
+                <Route path="/" element={<Dashboard language={language} />} />
+                <Route path="/navigator" element={<Navigator />} />
+                <Route path="/crowd" element={<CrowdIntel />} />
+                <Route path="/concierge" element={<Concierge language={language} />} />
+                <Route path="/transport" element={<Transport />} />
+                <Route path="/sustainability" element={<Sustainability />} />
+                <Route path="/accessibility" element={<AccessibilityPage />} />
+                <Route path="/operations" element={<Operations />} />
+                <Route
+                  path="*"
+                  element={
+                    <div className="flex h-64 items-center justify-center">
+                      <div className="text-center">
+                        <h2 className="text-4xl font-bold text-nexus-text-primary">404</h2>
+                        <p className="mt-2 text-nexus-text-secondary">Page not found</p>
+                      </div>
                     </div>
-                  </div>
-                }
-              />
-            </Routes>
-          </Suspense>
+                  }
+                />
+              </Routes>
+            </Suspense>
+          </ErrorBoundary>
         </main>
       </div>
+
+      {/* Accessibility Settings Panel — slides in from right */}
+      {showA11yPanel && (
+        <div className="fixed inset-0 z-50 flex justify-end" onClick={() => setShowA11yPanel(false)}>
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
+          <div
+            className="relative z-10 h-full w-80 overflow-y-auto border-l border-nexus-border bg-[#0d1117] p-6 shadow-2xl animate-slide-in"
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Accessibility settings"
+          >
+            <div className="mb-6 flex items-center justify-between">
+              <h2 className="text-lg font-bold text-nexus-text-primary">Accessibility</h2>
+              <button
+                onClick={() => setShowA11yPanel(false)}
+                className="rounded-lg p-1.5 text-nexus-text-secondary hover:bg-white/5 hover:text-white"
+                aria-label="Close accessibility panel"
+              >
+                ✕
+              </button>
+            </div>
+            <AccessibilityPanel
+              preferences={preferences}
+              onToggle={togglePreference}
+              onReset={resetPreferences}
+            />
+          </div>
+        </div>
+      )}
 
       {/* Toast Notifications */}
       {toasts.map((toast) => (

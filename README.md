@@ -5,9 +5,9 @@
 > Built with React 18, Gemini 2.5 Flash API, and zero-config deployment.
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![React](https://img.shields.io/badge/React-18-blue.svg)
+![React](https://img.shields.io/badge/React-19.2.7-blue.svg)
 ![Gemini](https://img.shields.io/badge/Gemini-2.5_Flash-orange.svg)
-![Tailwind](https://img.shields.io/badge/Tailwind-v4-blue.svg)
+![Vite](https://img.shields.io/badge/Vite-8.1.1-blue.svg)
 ![Accessibility](https://img.shields.io/badge/WCAG-2.1_AA-green.svg)
 [![Live Demo](https://img.shields.io/badge/Live_Demo-Vercel-black?logo=vercel&logoColor=white)](https://nexus-ai-omega-ochre.vercel.app/)
 

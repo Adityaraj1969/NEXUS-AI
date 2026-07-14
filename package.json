@@ -1,8 +1,14 @@
 {
   "name": "nexus-ai",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "description": "GenAI-powered Smart Stadium Command Platform for FIFA World Cup 2026 — Real-time crowd analytics, security monitoring, and operational intelligence.",
+  "author": "NEXUS AI Team",
+  "license": "MIT",
   "type": "module",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",

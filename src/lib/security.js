@@ -55,7 +55,7 @@ const VALIDATION_PATTERNS = Object.freeze({
   coordinates: /^-?\d{1,3}\.\d{1,8},\s?-?\d{1,3}\.\d{1,8}$/,
 
   /** ISO 639-1 language code from FIFA's official languages */
-  languageCode: /^(en|es|fr|de|ar|pt|ru)$/,
+  languageCode: /^(en|es|fr|de|ar|pt|ru|ja)$/,
 
   /** Search query: alphanumeric, spaces, basic punctuation, 1-200 chars */
   searchQuery: /^[\p{L}\p{N}\s.,!?'":\-()]{1,200}$/u,
