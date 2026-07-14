@@ -157,6 +157,10 @@ export default function Concierge({ language = 'en' }) {
       
       recognitionRef.current.onend = () => setIsListening(false);
       recognitionRef.current.onerror = () => setIsListening(false);
+      
+      return () => {
+        recognitionRef.current?.abort();
+      };
     }
   }, []);
 

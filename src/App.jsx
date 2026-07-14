@@ -102,6 +102,12 @@ function App() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // Sync language and dir with HTML element for accessibility
+  useEffect(() => {
+    document.documentElement.lang = language;
+    document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
+  }, [language]);
+
   // Listen for toast notifications from HybridGeminiClient
   useEffect(() => {
     const handleToast = (e) => {
@@ -114,6 +120,25 @@ function App() {
     window.addEventListener('nexus-toast', handleToast);
     return () => window.removeEventListener('nexus-toast', handleToast);
   }, []);
+
+  // Handle Escape key for A11y Panel
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (showA11yPanel && e.key === 'Escape') {
+        setShowA11yPanel(false);
+      }
+    };
+    if (showA11yPanel) {
+      document.body.style.overflow = 'hidden';
+      window.addEventListener('keydown', handleKeyDown);
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [showA11yPanel]);
 
   const removeToast = useCallback((id) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
@@ -206,9 +231,10 @@ function App() {
       )}
 
       {/* Toast Notifications */}
-      {toasts.map((toast) => (
+      {toasts.map((toast, idx) => (
         <Toast
           key={toast.id}
+          index={idx}
           message={toast.message}
           type={toast.type}
           onDismiss={() => removeToast(toast.id)}

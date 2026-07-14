@@ -161,7 +161,7 @@ Wheelchair-accessible route planner, sensory-friendly zone finder, companion sea
 
 | Category | Technology | Purpose |
 |----------|-----------|---------|
-| **Framework** | React 18 + Vite 6 | Component architecture + instant HMR |
+| **Framework** | React 19 + Vite 8 | Component architecture + instant HMR |
 | **AI** | Gemini 2.5 Flash | GenAI insights, chat, JSON predictions |
 | **AI SDK** | `@google/genai` | Official Google GenAI SDK |
 | **Styling** | Tailwind CSS v4 | Utility-first responsive design |

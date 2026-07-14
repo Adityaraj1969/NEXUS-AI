@@ -54,7 +54,7 @@ export default function StadiumMap({ venue, zones = [], onZoneClick, selectedZon
   );
 
   return (
-    <div className="relative" role="img" aria-label={`Stadium map for ${venue || 'current venue'}`}>
+    <div className="relative" role="group" aria-label={`Stadium map for ${venue || 'current venue'}`}>
       <svg
         viewBox="0 0 400 300"
         className="w-full rounded-xl"

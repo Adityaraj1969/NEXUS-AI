@@ -179,15 +179,12 @@ export default function Header({
         <button
           onClick={() => {
             onToggleA11y?.();
-            window.dispatchEvent(new CustomEvent('nexus-toast', { 
-              detail: { message: 'High visibility mode toggled', type: 'info' } 
-            }));
           }}
           aria-label="Toggle accessibility settings"
           className="rounded-lg p-2 text-nexus-text-secondary transition-colors
             hover:bg-white/5 hover:text-nexus-text-primary"
         >
-          <Eye className="h-4 w-4" />
+          <Eye className="h-4 w-4" aria-hidden="true" />
         </button>
 
         {/* Notification Bell */}

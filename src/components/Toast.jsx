@@ -22,7 +22,7 @@ const TYPE_CONFIG = {
  * @param {number} [props.duration=5000] - Auto-dismiss duration in ms
  * @returns {JSX.Element|null}
  */
-export default function Toast({ message, type = 'info', onDismiss, duration = 5000 }) {
+export default function Toast({ message, type = 'info', onDismiss, duration = 5000, index = 0 }) {
   const [visible, setVisible] = useState(true);
   const config = TYPE_CONFIG[type] || TYPE_CONFIG.info;
   const { Icon } = config;
@@ -39,7 +39,8 @@ export default function Toast({ message, type = 'info', onDismiss, duration = 50
     <div
       role="status"
       aria-live="polite"
-      className={`fixed bottom-6 right-6 z-[9999] flex max-w-sm items-center gap-3
+      style={{ bottom: `${1.5 + index * 4.5}rem` }}
+      className={`fixed right-6 z-[9999] flex max-w-sm items-center gap-3
         rounded-xl border px-4 py-3 shadow-2xl backdrop-blur-sm transition-all duration-300
         ${config.bg} ${visible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}
     >

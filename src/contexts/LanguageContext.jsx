@@ -12,6 +12,7 @@ export const LANGUAGES = [
   { code: 'pt', name: 'Portuguese', nativeName: 'Português', flag: '🇧🇷', rtl: false },
   { code: 'de', name: 'German', nativeName: 'Deutsch', flag: '🇩🇪', rtl: false },
   { code: 'ja', name: 'Japanese', nativeName: '日本語', flag: '🇯🇵', rtl: false },
+  { code: 'ru', name: 'Russian', nativeName: 'Русский', flag: '🇷🇺', rtl: false },
 ];
 
 const LanguageContext = createContext(null);

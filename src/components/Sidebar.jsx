@@ -47,7 +47,6 @@ export default function Sidebar({ collapsed, onToggle, language = 'en' }) {
   return (
     <>
       <aside
-        role="navigation"
         aria-label="Main navigation"
         className={`fixed left-0 top-0 z-40 flex h-screen flex-col border-r border-nexus-border
           bg-gradient-to-b from-nexus-bg-primary/95 via-[#131124]/95 to-nexus-primary/20 backdrop-blur-2xl transition-all duration-300 w-[260px]

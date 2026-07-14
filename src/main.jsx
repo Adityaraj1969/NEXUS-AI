@@ -7,7 +7,7 @@ import './index.css';
 /**
  * NEXUS AI — Application Entry Point
  *
- * Bootstraps the React 18 application with:
+ * Bootstraps the React 19 application with:
  * - StrictMode for development warnings and double-render detection
  * - BrowserRouter for client-side routing (SPA)
  * - Root App component as the application shell

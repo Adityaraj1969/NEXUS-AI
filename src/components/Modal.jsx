@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback, useId } from 'react';
 import { X } from 'lucide-react';
 
 /**
@@ -25,6 +25,7 @@ const SIZE_CLASSES = {
 export default function Modal({ isOpen, onClose, title, children, size = 'md' }) {
   const dialogRef = useRef(null);
   const previousFocus = useRef(null);
+  const titleId = useId();
 
   // Focus trap
   const handleKeyDown = useCallback((e) => {
@@ -79,7 +80,7 @@ export default function Modal({ isOpen, onClose, title, children, size = 'md' })
         ref={dialogRef}
         role="dialog"
         aria-modal="true"
-        aria-labelledby="modal-title"
+        aria-labelledby={titleId}
         tabIndex={-1}
         onKeyDown={handleKeyDown}
         className={`glass relative z-10 w-full rounded-2xl border border-nexus-border
@@ -87,7 +88,7 @@ export default function Modal({ isOpen, onClose, title, children, size = 'md' })
       >
         {/* Header */}
         <div className="mb-4 flex items-center justify-between">
-          <h2 id="modal-title" className="text-lg font-semibold text-nexus-text-primary">
+          <h2 id={titleId} className="text-lg font-semibold text-nexus-text-primary">
             {title}
           </h2>
           <button

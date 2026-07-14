@@ -30,12 +30,13 @@ export default function LanguageSelector({ value = 'en', onChange, className = '
   const current = LANGUAGES.find((l) => l.code === value) || LANGUAGES[0];
 
   useEffect(() => {
+    if (!open) return;
     const handleClickOutside = (e) => {
       if (ref.current && !ref.current.contains(e.target)) {setOpen(false);}
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  }, [open]);
 
   return (
     <div ref={ref} className={`relative ${className}`}>

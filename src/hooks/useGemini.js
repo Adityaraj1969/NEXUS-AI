@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { geminiClient } from '../services/gemini';
 
 /**
@@ -23,7 +23,15 @@ import { geminiClient } from '../services/gemini';
 export function useGemini() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [isLiveMode, setIsLiveMode] = useState(geminiClient.isLiveMode);
   const pendingRef = useRef(new Map());
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIsLiveMode(geminiClient.isLiveMode);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   /**
    * Wraps an async AI call with loading/error state management
@@ -91,7 +99,7 @@ export function useGemini() {
     generateInsight,
     generateJSON,
     chat,
-    isLiveMode: geminiClient.isLiveMode,
+    isLiveMode,
     loading,
     error,
   };

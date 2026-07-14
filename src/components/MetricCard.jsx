@@ -79,7 +79,6 @@ export default function MetricCard({
           <div className="mt-2 flex items-baseline gap-1.5">
             <span
               className="text-3xl font-bold text-nexus-text-primary"
-              aria-live="polite"
             >
               {displayValue.toLocaleString()}
             </span>

@@ -144,6 +144,25 @@ export default function Navigator() {
   const dropdownRef = useRef(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setDropdownOpen(false);
+      }
+    };
+    const handleKeyDown = (e) => {
+      if (dropdownOpen && e.key === 'Escape') {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [dropdownOpen]);
+
   const filteredDestinations = useMemo(() => {
     if (!searchQuery) {return DESTINATIONS;}
     const q = searchQuery.toLowerCase();

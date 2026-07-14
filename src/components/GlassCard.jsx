@@ -37,7 +37,7 @@ export default function GlassCard({
 
   return (
     <Component
-      role="region"
+      role={onClick ? undefined : 'region'}
       aria-label={title || 'Content card'}
       onClick={onClick}
       className={`glass rounded-2xl p-5 transition-all duration-300

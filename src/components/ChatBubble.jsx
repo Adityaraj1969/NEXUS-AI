@@ -27,7 +27,7 @@ export default function ChatBubble({ message, sender, timestamp, language = 'en'
           <Bot className="h-4 w-4 text-nexus-secondary" aria-hidden="true" />
         </div>
         <div className="glass max-w-xs rounded-2xl rounded-tl-sm px-4 py-3">
-          <div className="flex items-center gap-1" aria-label="AI is typing">
+          <div className="flex items-center gap-1" role="status" aria-label="AI is typing">
             <span className="h-2 w-2 animate-bounce rounded-full bg-nexus-text-secondary [animation-delay:0ms]" />
             <span className="h-2 w-2 animate-bounce rounded-full bg-nexus-text-secondary [animation-delay:150ms]" />
             <span className="h-2 w-2 animate-bounce rounded-full bg-nexus-text-secondary [animation-delay:300ms]" />
